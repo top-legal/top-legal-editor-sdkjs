@@ -1099,9 +1099,23 @@
 
 					global_mouseEvent.Sender = _t.canvasForms;
 
-					_t.parent.onmousewheel = _t.onMouseWhell;
-					if (_t.parent.addEventListener)
-						_t.parent.addEventListener("DOMMouseScroll", _t.onMouseWhell, false);
+					// Bind the mouse wheel. Prefer the standard `wheel` event: on macOS Chrome the
+					// legacy `mousewheel` event does not reach this handler when the PDF viewer is
+					// embedded in a cross-origin iframe, so the PDF would not scroll by wheel (the
+					// document/spreadsheet editors bind on their own scroll container and are not
+					// affected). `wheel` is always delivered; we bind it exclusively to avoid the
+					// double-scroll that binding both `mousewheel` and `wheel` would cause, and fall
+					// back to the legacy events only where `wheel` is unavailable.
+					if (_t.parent.addEventListener && ("onwheel" in document.createElement("div")))
+					{
+						_t.parent.addEventListener("wheel", _t.onMouseWhell, { passive: false });
+					}
+					else
+					{
+						_t.parent.onmousewheel = _t.onMouseWhell;
+						if (_t.parent.addEventListener)
+							_t.parent.addEventListener("DOMMouseScroll", _t.onMouseWhell, false);
+					}
 
 					_t.startTimer();
 				}

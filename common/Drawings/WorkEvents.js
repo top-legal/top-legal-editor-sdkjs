@@ -945,6 +945,18 @@
 			}
 		}
 
+		// Standard `wheel` event fallback: when neither the legacy `wheelDelta`/`wheelDeltaY`
+		// nor Firefox's `detail` are present (a pure `wheel` event, e.g. Firefox), derive the
+		// same 45px-per-notch steps from deltaX/deltaY, honoring deltaMode (0=pixel, 1=line,
+		// 2=page). Same sign convention as the legacy path (deltaY > 0 scrolls down).
+		if (undefined === e.wheelDelta && undefined === e.detail &&
+			(undefined !== e.deltaY || undefined !== e.deltaX))
+		{
+			var _wheelScale = (1 === e.deltaMode) ? 45 : ((2 === e.deltaMode) ? 45 * 20 : 45 / 40);
+			deltaY = (e.deltaY || 0) * _wheelScale;
+			deltaX = isAllowHorizontal ? (e.deltaX || 0) * _wheelScale : 0;
+		}
+
 		deltaX >>= 0;
 		deltaY >>= 0;
 
