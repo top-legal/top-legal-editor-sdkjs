@@ -1045,6 +1045,14 @@
         if (nType == window["AscPDF"].Api.Types.display["hidden"] || nType == window["AscPDF"].Api.Types.display["noView"])
             return true;
 
+        // top.legal: a comment the viewer's commentGroups may not see (e.g. an internal comment for
+        // the counterparty) is filtered out of the comments panel, but its sticky-note icon /
+        // highlight was still drawn on the page. Hide the annotation itself too (also not clickable).
+        // Plain markup without comment text stays visible.
+        let isCommentAnnot = this.IsComment() || !!this.GetContents();
+        if (isCommentAnnot && AscCommon.UserInfoParser && AscCommon.UserInfoParser.canViewComment(this.GetAuthor()) === false)
+            return true;
+
         return false;
     };
     CAnnotationBase.prototype.SetDisplay = function(nType) {
