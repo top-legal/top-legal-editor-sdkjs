@@ -1243,6 +1243,14 @@
             oFirstCommToEdit.SetUserId(oCommentData.m_sUserId);
             oFirstCommToEdit.SetContents(oCommentData.m_sText);
         }
+        // top.legal: the author's group prefix carries the comment scope. A scope change (badge
+        // click) keeps the text, so the author was never written above and the annotation kept
+        // its old scope (visibility + page icon unchanged, in every session). Apply it on its own
+        // and repaint; this also runs on the other sessions when the change arrives.
+        else if (oCommentData.m_sUserName && oFirstCommToEdit.GetAuthor() != oCommentData.m_sUserName) {
+            oFirstCommToEdit.SetAuthor(oCommentData.m_sUserName);
+            this.AddToRedraw && this.AddToRedraw();
+        }
 
         let aRepliesToBeChanged = [];
         let aReplyToDel = [];
