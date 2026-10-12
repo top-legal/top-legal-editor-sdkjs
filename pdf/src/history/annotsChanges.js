@@ -1187,6 +1187,9 @@ CChangesPDFAnnotAuthor.prototype.private_SetValue = function(Value)
 {
 	let oAnnot = this.Class;
 	oAnnot.SetAuthor(Value);
+	// top.legal: the author group carries the comment scope, and IsHidden() hides comments the
+	// viewer may not see — repaint so a re-scope from another session shows/hides the icon live.
+	oAnnot.AddToRedraw && oAnnot.AddToRedraw();
 	let oAscCommData = oAnnot.GetAscCommentData();
 	if (oAscCommData) {
 		let oCommData = new AscCommon.CCommentData();
